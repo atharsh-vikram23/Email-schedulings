@@ -10,7 +10,7 @@ export default function Dashboard() {
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data: userAuth } = useQuery({
+  const { data: userAuth, isError, isLoading: isAuthLoading } = useQuery({
     queryKey: ["authMe"],
     queryFn: () => api.get("/auth/me").then((res) => res.data),
     retry: false,
@@ -51,7 +51,12 @@ export default function Dashboard() {
     refetchSlack();
   };
 
-  if (!userAuth) {
+  if (isError) {
+    window.location.href = "/login";
+    return null;
+  }
+
+  if (isAuthLoading || !userAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA]">
         <RefreshCw className="w-5 h-5 animate-spin text-gray-400" />
